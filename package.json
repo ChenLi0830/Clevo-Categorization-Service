@@ -1,0 +1,43 @@
+{
+  "name": "clevo-nlp-categorize",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy-dev": "cd serverless && serverless --stage dev deploy",
+    "deploy-staging": "cd serverless && serverless --stage staging deploy",
+    "log": "cd serverless && sls logs -f graphql --tail",
+    "deploy-production": "cd serverless && serverless --stage=dev deploy",
+    "dev-client": "webpack -d --watch",
+    "host-client": "http-server ./graphiQLClient/",
+    "client": "webpack && http-server ./graphiQLClient/ -p 1943",
+    "host-fake-db": "json-server --watch ./serverless/dev/db.json",
+    "host-local-server": "DEBUG_MODE=true nodemon ./serverless/dev/server.js"
+  },
+  "author": "Chen Li",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.2",
+    "express-graphql": "^0.6.3",
+    "fluent-ffmpeg": "^2.1.2",
+    "graphiql": "^0.11.2",
+    "graphql": "^0.10.5",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.4",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.22.0",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "http-server": "^0.10.0",
+    "path": "^0.12.7",
+    "serverless-dynamodb-local": "^0.2.22",
+    "serverless-plugin-warmup": "^3.0.5-rc.1",
+    "webpack": "^3.4.1",
+    "webpack-dev-server": "^2.6.1"
+  }
+}

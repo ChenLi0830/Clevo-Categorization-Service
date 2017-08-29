@@ -1,0 +1,59 @@
+service: clevo-nlp-analytics # NOTE: update this with your service name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+custom:
+  defaultStage: dev
+
+provider:
+  name: aws
+  runtime: python3.6
+  stage: ${opt:stage, self:custom.defaultStage}
+  # Deploys to dev stage by default.
+  # To deploy for production, run 'serverless deploy --stage production'
+  profile: ${self:provider.stage}ProfileClevo
+  region: us-west-2
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:us-west-2:*:*"
+
+# you can add packaging information here
+#package:
+#  include:
+#    - include-me.py
+#    - include-me-dir/**
+#  exclude:
+#    - exclude-me.py
+#    - exclude-me-dir/**
+
+functions:
+  categorize:
+    handler: handler.categorize
+    warmup: true
+    events:
+    - http:
+        path: categorize
+        method: get
+        cors: true
+  # hello:
+  #   handler: handler.hello
+  #   warmup: true
+  #   events:
+  #   - http:
+  #       path: test
+  #       method: get
+  #       cors: true
+
+plugins:
+  - serverless-plugin-warmup
+  - serverless-dynamodb-local
