@@ -33,6 +33,7 @@ def clean_text(text):
     text = regex.sub("[']{5}", "", text) # remove italic+bold symbols
     text = regex.sub("[']{3}", "", text) # remove bold symbols
     text = regex.sub("[']{2}", "", text) # remove italic symbols
+    text = text.rstrip()
     
     # Chinese specific
     text = regex.sub(u"[^\r\n\p{Han}。！？]", "", text)
@@ -85,13 +86,13 @@ def build_data_cv2(data_folder,cv = 3,clean_string= True):
 
                 if clean_string:
                     orig_rev = clean_text(" ".join(rev))
-                    print(orig_rev)
+                    #print(orig_rev)
                 else:
                     orig_rev = " ".join(rev)
                 words = set(word_segment(orig_rev))
 
                 for word in words:
-                    print(word)
+                    #print(word)
                     vocab[word] += 1
                 datum  = {"y":i-1, 
                           "text": orig_rev,                             
@@ -221,11 +222,11 @@ def load_bin_vec(fname, vocab):
                 if complete_flag:
                     word_vecs[last_word] = last_vec
                     last_vec = np.array([])
-                    print('Successfuly load 1 vector. Dim of a word vector', len(word_vecs[last_word]))
+                    #print('Successfuly load 1 vector. Dim of a word vector', len(word_vecs[last_word]))
 
                 if current_word in vocab:
-                    print(current_word)
-                    print('current word is in vocab.')
+                    #print(current_word)
+                    #print('current word is in vocab.')
                     read_flag = True
                 else:
                     read_flag = False
@@ -272,21 +273,7 @@ if __name__=="__main__":
     W, word_idx_map = get_W(w2v)
     rand_vecs = {}
     add_unknown_words(rand_vecs, vocab)
-    W2, _ = get_W(rand_vecs)
-    cPickle.dump([revs, W, W2, word_idx_map, vocab, w2v], open("mr_folder/mr.p", "wb"))
+    W2, word_idx_map2 = get_W(rand_vecs)
+    cPickle.dump([revs, W, W2, word_idx_map, word_idx_map2, vocab, w2v], open("mr_folder/mr.p", "wb"))
     print("dataset created!")
- #    fname = 'CNN_clevo/zh/zh.tsv'
-	# data_folder = ["/Users/wangwei/cuda_keras_projets/clevo/texts.intro","texts.close"] 
-	# print "loading data..."
-	# revs, vocab = build_data_cv(data_folder, cv=3)
-	# max_l = np.max(pd.DataFrame(revs)["num_words"])
-	# print "data loaded!"
-	# print "number of sentences: " + str(len(revs))
-	# print "vocab size: " + str(len(vocab))
-	# print "max sentence length: " + str(max_l)
-	# print "loading word2vec vectors...",
-	# w2v = load_bin_vec(fname, vocab)
-	# print "word2vec loaded!"
-	# print "num words already in word2vec: " + str(len(w2v))
-	# add_unknown_words(w2v, vocab)
-	# W, word_idx_map = get_W(w2v)
+

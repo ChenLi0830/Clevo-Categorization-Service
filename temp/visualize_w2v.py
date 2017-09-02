@@ -2,7 +2,6 @@
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import six.moves.cPickle as pickle 
-import os
 
 from matplotlib import font_manager
 

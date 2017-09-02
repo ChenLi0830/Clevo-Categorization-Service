@@ -1,10 +1,10 @@
 # encoding: utf-8
-import codecs
-import os
 import regex
 import jieba
 import numpy as np
 import pandas as pd
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 
 import six.moves.cPickle as pickle # for python 3
 #import cPickle for python 2.7
@@ -15,18 +15,7 @@ from keras.preprocessing import sequence
 from keras.models import model_from_json
 
 
-# ARR = ["您好960号为您服务，请问有什么可以帮您的",
-# "您好，642号为您服务",
-# "您好956为您服务，请问有什么可以帮您",
-# "您好959号为您服务",
-# "您好946为您服务，请问有什么可以帮您",
-# "您好936为您服务",
-# "您好925号为您服务",
-# "您好804为您服务，有什么可以帮您",
-# "您好671为您服务",
-# "您好642号为您服务",
-# "您好，966号为您服务，请问有什么可以帮您",
-# "您好960号为您服务，请问有什么可以帮您的"]
+
 
 if __name__=="__main__":    
     # new data path 
@@ -46,10 +35,10 @@ if __name__=="__main__":
     # loading word_idx_map for training set
     print("loading word_idx_map data...")
     x = pickle.load(open("mr_folder/mr.p","rb"), encoding='latin1')
-    revs, W, W2, word_idx_map, vocab, w2v = x[0], x[1], x[2], x[3], x[4], x[5]
+    revs, W, W2, word_idx_map, word_idx_map2, vocab = x[0], x[1], x[2], x[3], x[4], x[5]
 
     # Creating datasets
-    datasets = make_idx_data_cv(revs, word_idx_map, 1, k=300)
+    datasets = make_idx_data_cv(revs, word_idx_map2, 1, k=300)
     x_train = datasets[0]
     x_test = datasets[1]
     test_all = x_train + x_test
