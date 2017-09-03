@@ -35,7 +35,7 @@ def clean_text(text):
     text = text.rstrip()
     
     # Chinese specific
-    text = regex.sub("[^\r\n\p{Han}。！？]", "", text)
+    text = regex.sub(u"[^\r\n\p{Han}。！？]", "", text)
     
     
     # Common
@@ -52,7 +52,7 @@ def sentence_segment(text):
     '''
     
     # Chinese specific
-    sents = regex.split("([。！？])?[\n]+|[。！？]", text) 
+    sents = regex.split(u"([。！？])?[\n]+|[。！？]", text) 
     return sents
 
 def word_segment(sent):
@@ -177,7 +177,7 @@ def get_W2(word_vecs, k=300):
     W = np.zeros(shape=(vocab_size+1, k), dtype='float32')
     W[0] = np.zeros(k, dtype='float32')
     i = 1
-    for word, vec in list(word_vecs.items()):
+    for word, vec in word_vecs.items():
         embedding_vector = word_vecs.get(word)
         W[i] = list(embedding_vector)
         i = i + 1
@@ -245,14 +245,14 @@ def load_bin_vec(fname, vocab):
                 if read_flag:
                     # remove [ from the first vector             
                     a = re.sub('\[','',row[2])
-                    last_vec = np.append(last_vec, list(map(np.float32, a.split())))
+                    last_vec = np.append(last_vec, map(np.float32, a.split()))
                 else:
                     continue
 
             else:
                 if read_flag:
                     a = re.sub('\]','',row[0])
-                    last_vec = np.append(last_vec, list(map(np.float32, a.split())))
+                    last_vec = np.append(last_vec, map(np.float32, a.split()))
 
     return word_vecs
 
@@ -272,14 +272,14 @@ if __name__=="__main__":
     revs, vocab = build_data_cv2(data_folder, cv=10, clean_string=True)
     max_l = np.max(pd.DataFrame(revs)["num_words"])
     print("data loaded!")
-    print(("number of sentences: " + str(len(revs))))
-    print(("vocab size: " + str(len(vocab))))
-    print(("max sentence length: " + str(max_l)))
+    print("number of sentences: " + str(len(revs)))
+    print("vocab size: " + str(len(vocab)))
+    print("max sentence length: " + str(max_l))
     print("loading word2vec vectors...")
     w2v = load_bin_vec(w2v_file, vocab)
 
     print("word2vec loaded!")
-    print(("num words already in word2vec: " + str(len(w2v))))
+    print("num words already in word2vec: " + str(len(w2v)))
     add_unknown_words(w2v, vocab)
     W, word_idx_map = get_W(w2v)
     rand_vecs = {}

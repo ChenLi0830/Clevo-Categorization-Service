@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Sep  2 15:57:40 2017
+
+@author: admin
+"""
+
 '''This example demonstrates the use of Convolution1D for text classification.
 '''
 
@@ -111,13 +119,34 @@ if __name__=="__main__":
 	print('lengh of y_train is :', y_train.shape[0])
 	print('Build model...')
     
-	model = Sequential()
+	    
+    # load pre-trained word embeddings into an Embedding layer
+    # note that we set trainable = False so as to keep the embeddings fixed
+    embedding_layer = Embedding(max_features + 1,
+                            embedding_dims,
+                            weights = [W2],
+                            input_length = maxlen,
+                            trainable = False)
+	
+    print('Training model.')
 
-	# we start off with an efficient embedding layer which maps
+    # train a 1D convnet with global maxpooling
+    sequence_input = Input(shape= (maxlen,), dtype='int32')
+    embedded_sequences = embedding_layer(sequence_input)
+x = Conv1D(128, 5, activation='relu')(embedded_sequences)
+x = MaxPooling1D(5)(x)
+x = Conv1D(128, 5, activation='relu')(x)
+x = MaxPooling1D(5)(x)
+x = Conv1D(128, 5, activation='relu')(x)
+x = MaxPooling1D(35)(x)
+x = Flatten()(x)
+x = Dense(128, activation='relu')(x)
+preds = Dense(len(labels_index), activation='softmax')(x)
+    # we start off with an efficient embedding layer which maps
 	# our vocab indices into embedding_dims dimensions
 	model.add(Embedding(max_features+1,
 	                    embedding_dims,
-	                    weights=[W],
+	                    weights=[W2],
 	                    input_length=maxlen,
 	                   trainable=False))
 	model.add(Dropout(0.2))
@@ -152,8 +181,8 @@ if __name__=="__main__":
 	              loss='categorical_crossentropy', 
 	              metrics=['accuracy'])
 	model.fit(x_train, y_train,
-	          batch_size=batch_size,
-	          epochs=epochs,
+	          batch_size = batch_size,
+	          epochs = epochs,
 	          verbose=2,
 	          validation_data=(x_test, y_test))
 	score = model.evaluate(x_test, y_test, verbose=0)
