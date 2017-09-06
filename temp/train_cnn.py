@@ -32,7 +32,7 @@ embedding_dims = 300
 filters = 50 # 100
 kernel_size = 3
 hidden_dims = 100
-epochs = 100
+epochs = 10
 
 def get_idx_from_sent(sent, word_idx_map, k=300):
     """

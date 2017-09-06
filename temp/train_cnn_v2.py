@@ -126,7 +126,7 @@ if __name__=="__main__":
     # note that we set trainable = False so as to keep the embeddings fixed
     embedding_layer = Embedding(max_features + 1,
                             embedding_dims,
-                            weights = [W2],
+                            weights = [W],
                             input_length = maxlen,
                             trainable = False)
 	

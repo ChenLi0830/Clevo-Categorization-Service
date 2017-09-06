@@ -1,26 +1,31 @@
 
 from sklearn.manifold import TSNE
+
+
+#import matplotlib
+#matplotlib.use('qt4agg')
 import matplotlib.pyplot as plt
 import six.moves.cPickle as pickle 
 
 from matplotlib import font_manager
-
-
+#matplotlib.rc('font', family='SimHei')
+myfont= font_manager.FontProperties(fname= '/usr/share/fonts/truetype/wqy/wqy-microhei.ttc')
 # Step 6: Visualize the embeddings.
 # Function to draw visualization of distance between embeddings.
 def plot_with_labels(low_dim_embs, labels, filename):
   assert low_dim_embs.shape[0] >= len(labels), 'More labels than embeddings'
   plt.figure(figsize=(18, 18))  # in inches
 
-  fontP = font_manager.FontProperties()
-  fontP.set_family('SimHei')
-  fontP.set_size(14)
+  #fontP = font_manager.FontProperties()
+  #fontP.set_family('SimHei')
+  #fontP.set_size(14)
   
   for i, label in enumerate(labels):
     x, y = low_dim_embs[i, :]
     plt.scatter(x, y)
+    plt.xlim([0,2])
     plt.annotate(label,
-                 fontproperties=fontP,
+                 fontproperties=myfont,#fontP,
                  xy=(x, y),
                  xytext=(5, 2),
                  textcoords='offset points',
