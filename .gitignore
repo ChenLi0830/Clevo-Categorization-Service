@@ -63,3 +63,5 @@ serverless/.serverless
 shared-local-instance.db
 serverless/config.js
 zh.tsv
+model.h5
+model.json
