@@ -65,3 +65,6 @@ serverless/config.js
 zh.tsv
 model.h5
 model.json
+serverless/dev/oneTimeScripts/data
+serverless/dev/oneTimeScripts/processedData
+*.zip
