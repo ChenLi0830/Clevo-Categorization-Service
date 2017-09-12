@@ -68,3 +68,4 @@ model.json
 serverless/dev/oneTimeScripts/data
 serverless/dev/oneTimeScripts/processedData
 *.zip
+server/__pycache__

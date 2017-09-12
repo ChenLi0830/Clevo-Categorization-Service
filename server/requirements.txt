@@ -1,0 +1,9 @@
+numpy
+jieba==0.39
+Flask==0.12.2
+regex==2017.7.28
+Keras==2.0.8
+six==1.10.0
+h5py
+gunicorn==19.7.1
+tensorflow
