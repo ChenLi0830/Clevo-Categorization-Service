@@ -13,6 +13,7 @@ from keras.layers import Dense, Dropout, Activation
 from keras.layers import Embedding
 from keras.layers import Conv1D, GlobalMaxPooling1D
 from keras import backend as K
+from keras.layers import BatchNormalization
 #os.chdir('/Users/wangwei/cuda_keras_projets/keras/examples/')
 
 import six.moves.cPickle as pickle # for python 3
@@ -26,10 +27,10 @@ import jieba
 
 # set parameters:
 
-maxlen = 64 #11
-batch_size = 5
+maxlen = 580 #11
+batch_size = 128
 embedding_dims = 300
-filters = 50 # 100
+filters = 100 # 100
 kernel_size = 3
 hidden_dims = 100
 epochs = 10
@@ -106,7 +107,7 @@ if __name__=="__main__":
 
     ############# modelling with CNN
     import keras
-    num_classes = 9
+    num_classes = 16
     # convert class vectors to binary class matrices
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
@@ -134,16 +135,15 @@ if __name__=="__main__":
 	                 padding='valid',
 	                 activation='relu',
 	                 strides=1))
+    model.add(BatchNormalization())
     # we use max pooling:
     model.add(GlobalMaxPooling1D())
 
     # We add a vanilla hidden layer:
     model.add(Dense(hidden_dims))
+    model.add(BatchNormalization())
     model.add(Dropout(0.2))
-    #model.add(Activation('relu'))
-
-    # We project onto a single unit output layer, and squash it with a sigmoid:
-    #model.add(Dense(1))
+    
     model.add(Activation('sigmoid'))
 
 

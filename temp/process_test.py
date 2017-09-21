@@ -13,14 +13,14 @@ from process_data import load_bin_vec, get_W, build_data_cv2, add_unknown_words
 from train_cnn import make_idx_data_cv, get_idx_from_sent
 from keras.preprocessing import sequence
 from keras.models import model_from_json
-
+import keras
 
 
 
 if __name__=="__main__":    
     # new data path 
-    data_folder = '/Users/wangwei/cuda_keras_projets/clevo/CNN_clevo/chen_test'
-    
+    #data_folder = '/Users/wangwei/cuda_keras_projets/clevo/CNN_clevo/chen_test'
+    data_folder = 'processedData' 
     # Storing them in a dictionary 
     revs, vocab = build_data_cv2(data_folder, cv=10, clean_string=True)
     
@@ -38,18 +38,25 @@ if __name__=="__main__":
     revs, W, W2, word_idx_map, word_idx_map2, vocab = x[0], x[1], x[2], x[3], x[4], x[5]
 
     # Creating datasets
-    datasets = make_idx_data_cv(revs, word_idx_map2, 1, k=300)
+    datasets = make_idx_data_cv(revs, word_idx_map2, 9, k=300)
     x_train = datasets[0]
     x_test = datasets[1]
+    y_train = datasets[2]
+    y_test = datasets[3]
     test_all = x_train + x_test
+    test_yall = y_train + y_test
     print('test_all shape', len(test_all))
+    print('test_yall shape', len(test_yall))
 
     # Padding sequences
-    maxlen = 64
+    maxlen = 580
     print('Pad sequences (samples x time)')
     x_test = sequence.pad_sequences(test_all, maxlen=maxlen)
     print('x_test shape:', x_test.shape)
-
+    num_classes = 16
+    # convert class vectors to binary class matrices
+    y_test = keras.utils.to_categorical(test_yall, num_classes)
+    print('y_test shape:', y_test.shape)
     # Loading model
     # load json and create model
     json_file = open('mr_folder/model.json', 'r')
@@ -62,9 +69,9 @@ if __name__=="__main__":
     print("Loaded model from disk")
     # evaluate loaded model on test data
     loaded_model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-    #score = loaded_model.evaluate(X, Y, verbose=0)
-    y_test = loaded_model.predict(x_test)
-    print(y_test[:5])
-    #print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
+    score = loaded_model.evaluate(x_test, y_test, verbose=1)
+    y_test_hat = loaded_model.predict(x_test)
+    #print(y_test[:5])
+    print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
 
     

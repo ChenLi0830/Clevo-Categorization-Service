@@ -21,6 +21,8 @@ from keras.layers import Embedding
 from keras.layers import Dense, Input, Flatten
 from keras.layers import Conv1D, MaxPooling1D, Embedding
 from keras.models import Model
+import keras.backend as K
+from keras.layers import BatchNormalization
 
 #os.chdir('/Users/wangwei/cuda_keras_projets/keras/examples/')
 
@@ -35,13 +37,13 @@ import jieba
 
 # set parameters:
 
-maxlen = 64 #11
+maxlen = 580 #11
 batch_size = 5
 embedding_dims = 300
 filters = 50 # 100
 kernel_size = 3
 hidden_dims = 100
-epochs = 100
+epochs = 10
 
 def get_idx_from_sent(sent, word_idx_map, k=300):
     """
@@ -114,13 +116,14 @@ if __name__=="__main__":
 
     ############# modelling with CNN
     import keras
-    num_classes = 9
+    num_classes = 16#9
     # convert class vectors to binary class matrices
     y_train = keras.utils.to_categorical(y_train, num_classes)
     y_test = keras.utils.to_categorical(y_test, num_classes)
     print('lengh of y_train is :', y_train.shape[0])
     print('Build model...')
     
+    K.clear_session()
 	    
     # load pre-trained word embeddings into an Embedding layer
     # note that we set trainable = False so as to keep the embeddings fixed
@@ -135,15 +138,20 @@ if __name__=="__main__":
     # train a 1D convnet with global maxpooling
     sequence_input = Input(shape= (maxlen,), dtype='int32')
     embedded_sequences = embedding_layer(sequence_input)
-    x = Conv1D(32, 7, activation='relu')(embedded_sequences)
+    x = Conv1D(64, 7, activation='relu')(embedded_sequences)
     x = MaxPooling1D(2)(x)
+    x = BatchNormalization()(x)
     x = Conv1D(64, 5, activation='relu')(x)
     x = MaxPooling1D(5)(x)
-    x = Conv1D(32, 4, activation='relu')(x)
+    x = BatchNormalization()(x)
+
+    x = Conv1D(64, 4, activation='relu')(x)
     #x = MaxPooling1D(2)(x)
     x = Flatten()(x)
-    x = Dense(128, activation='relu')(x)
-    preds = Dense(9, activation='softmax')(x)
+    x = Dense(128, activation='sigmoid')(x)
+    x = BatchNormalization()(x)
+
+    preds = Dense(num_classes, activation='softmax')(x)
     
     model = Model(sequence_input, preds)
     model.compile(loss='categorical_crossentropy',
@@ -152,7 +160,7 @@ if __name__=="__main__":
 
     model.fit(x_train, y_train,
           batch_size=128,
-          epochs=10,
+          epochs=5,
           verbose = 2,
           validation_data=(x_test, y_test))
 

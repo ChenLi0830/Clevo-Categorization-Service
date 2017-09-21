@@ -267,7 +267,7 @@ def add_unknown_words(word_vecs, vocab, min_df=1, k=300):
 
 if __name__=="__main__":    
     w2v_file =  'zh/zh.tsv'   
-    data_folder = 'chen_test'#["textFiles/text.S_INTRO", "textFiles/text.S_END","textFiles/text.S_WAIT_WARNING"]     
+    data_folder = 'processedData' #'chen_test'#["textFiles/text.S_INTRO", "textFiles/text.S_END","textFiles/text.S_WAIT_WARNING"]     
     print("loading data...")        
     revs, vocab = build_data_cv2(data_folder, cv=10, clean_string=True)
     max_l = np.max(pd.DataFrame(revs)["num_words"])

@@ -63,9 +63,16 @@ serverless/.serverless
 shared-local-instance.db
 serverless/config.js
 zh.tsv
-model.h5
-model.json
+*.h5
+*.json
 serverless/dev/oneTimeScripts/data
 serverless/dev/oneTimeScripts/processedData
 *.zip
 server/__pycache__
+
+# data text files
+*.txt
+mr.p
+*.png
+*.pyc
+*.bak
