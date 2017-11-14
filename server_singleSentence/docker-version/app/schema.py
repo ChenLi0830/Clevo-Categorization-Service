@@ -4,9 +4,21 @@ import sys
 
 
 class Query(graphene.ObjectType):
-    categorizeSentence = graphene.String(
-        text=graphene.String(required=True),
-        category_list=graphene.Argument(
+    placeholder = graphene.String()
+
+    def resolve_placeholder(self, info):
+        return "This is a placeholder query, use the mutation instead"
+
+
+class categoryResult(graphene.ObjectType):
+    categoriesOfSentence = graphene.List(graphene.String)
+
+
+class CategorizeSentence(graphene.Mutation):
+    class Arguments:
+        # geo = GeoInput(required=True)
+        text = graphene.String(required=True)
+        category_list = graphene.Argument(
             graphene.List(graphene.String),
             default_value=['结束询问',
                            '开头语',
@@ -18,11 +30,18 @@ class Query(graphene.ObjectType):
                            '等待提示',
                            '扣款话术2号码保护']
         )
-    )
 
-    def resolve_categorizeSentence(self, info, text, category_list):
+    Output = categoryResult
+
+    def mutate(self, info, text, category_list):
         print('category_list', category_list, file=sys.stderr)
-        return categorization(text, category_list)
+        result = [categorization(text, category_list)]
+        print('categorizationResult', result, file=sys.stderr)
+        return categoryResult(categoriesOfSentence=result)
 
 
-schema = graphene.Schema(query=Query)
+class Mutation(graphene.ObjectType):
+    categorizeSentence = CategorizeSentence.Field()
+
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
