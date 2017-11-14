@@ -146,6 +146,7 @@ def get_idx_from_text(cl_text, word_idx_map):
             x.append(word_idx_map[word])
     return x
 
+
 def categorization(text):
     # new data path
     # data_folder = 'processedData'
