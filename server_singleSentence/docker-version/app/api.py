@@ -196,14 +196,14 @@ def categorization(text, label_list):
 
     # Padding sequences
     maxlen = 580
-    print('Pad sequences (samples x time)')
+    # print('Pad sequences (samples x time)')
     x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
-    print('x_test shape:', x_test.shape)
+    # print('x_test shape:', x_test.shape)
 
     # score = model_nlp.evaluate(x_test, y_test, verbose=0)
 
     y_test_hat = model_nlp.predict(x_test)
 
     response = build_index_label(y_test_hat, label_list)
-    print(response)
+    # print(response)
     return response

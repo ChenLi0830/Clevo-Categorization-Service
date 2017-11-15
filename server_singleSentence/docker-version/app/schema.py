@@ -34,7 +34,7 @@ class CategorizeSentence(graphene.Mutation):
     Output = categoryResult
 
     def mutate(self, info, text, category_list):
-        print('category_list', category_list, file=sys.stderr)
+        # print('category_list', category_list, file=sys.stderr)
         result = [categorization(text, category_list)]
         print('categorizationResult', result, file=sys.stderr)
         return categoryResult(categoriesOfSentence=result)
