@@ -6,6 +6,7 @@ from flask import Flask
 app = Flask(__name__)
 
 import jieba
+import sys
 import regex
 import numpy as np
 import os
@@ -16,7 +17,8 @@ from keras.preprocessing import sequence
 from keras.models import model_from_json
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
+model_nlp = None
+word_idx_map2 = None
 
 def word_segment(sent):
     '''
@@ -148,6 +150,29 @@ def get_idx_from_text(cl_text, word_idx_map):
 
 
 def categorization(text, label_list):
+    global model_nlp
+    global word_idx_map2
+
+    # Initialize model and word_idx_map
+    if not model_nlp:
+        print('Loading model initially', file=sys.stderr)
+        # Load model
+        json_file = open('mr_folder/model_demo.json', 'r')
+        model_nlp_json = json_file.read()
+        json_file.close()
+        model_nlp = model_from_json(model_nlp_json)
+
+        # Load weights into model
+        model_nlp.load_weights("mr_folder/model_demo.h5")
+        print("Loaded model from disk")
+        # evaluate loaded model on test data
+        model_nlp.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+
+        # Load word_idx_map for training set
+        print("loading word_idx_map data...")
+        # x = pickle.load(open("mr_folder/mr_demo.p","rb"), encoding='latin1')
+        word_idx_map2 = pickle.load(open("mr_folder/idx_demo.p", "rb"), encoding='latin1')
+
     # new data path
     # data_folder = 'processedData'
     # text = '你好，有什么可以帮您唉你好，那个我想问一下咱那个润滑里边那个大众4S店。那个。说不定患者那是要遗弃的还是上海大众，嗯高尔夫是一汽大众，售后是87983734。8798。3734723公星期四签嗯，嗯。'
@@ -164,12 +189,6 @@ def categorization(text, label_list):
     print("vocab size: " + str(len(vocab)))
     print("sentence length: " + str(revs['num_words']))
 
-    # loading word_idx_map for training set
-    print("loading word_idx_map data...")
-    # x = pickle.load(open("mr_folder/mr_demo.p","rb"), encoding='latin1')
-    word_idx_map2 = pickle.load(open("mr_folder/idx_demo.p", "rb"), encoding='latin1')
-    # _, W, W2, word_idx_map, word_idx_map2, vocab = x[0], x[1], x[2], x[3], x[4], x[5]
-
     sent = list(get_idx_from_sent(revs['text'], word_idx_map2))
     x_test = []
     x_test.append(sent)
@@ -181,20 +200,9 @@ def categorization(text, label_list):
     x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
     print('x_test shape:', x_test.shape)
 
-    # Loading model
-    # load json and create model
-    json_file = open('mr_folder/model_demo.json', 'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    loaded_model = model_from_json(loaded_model_json)
+    # score = model_nlp.evaluate(x_test, y_test, verbose=0)
 
-    # load weights into new model
-    loaded_model.load_weights("mr_folder/model_demo.h5")
-    print("Loaded model from disk")
-    # evaluate loaded model on test data
-    loaded_model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-    # score = loaded_model.evaluate(x_test, y_test, verbose=0)
-    y_test_hat = loaded_model.predict(x_test)
+    y_test_hat = model_nlp.predict(x_test)
 
     response = build_index_label(y_test_hat, label_list)
     print(response)
